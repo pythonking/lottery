@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ht.lottery.mapper.ControlButtonMapper">
+    <cache/>
+    <update id="update" parameterType="com.ht.lottery.entity.ControlButton">
+        update control_button set status = #{status}
+    </update>
+
+    <select id="selectOne" resultType="com.ht.lottery.entity.ControlButton" useCache="true">
+        select id,status from control_button limit 1
+    </select>
+</mapper>

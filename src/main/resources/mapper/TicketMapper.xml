@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ht.lottery.mapper.TicketMapper">
+    <resultMap id="BaseResultMap" type="com.ht.lottery.entity.Ticket">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="code" jdbcType="VARCHAR" property="code"/>
+        <result column="type_id" jdbcType="INTEGER" property="typeId"/>
+        <result column="status" jdbcType="INTEGER" property="status"/>
+        <result column="use_time" jdbcType="TIMESTAMP" property="useTime"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, code, type_id, status,use_time,create_time
+  </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from ticket
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from ticket
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+    <insert id="insert" parameterType="com.ht.lottery.entity.Ticket">
+        insert into ticket
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="code != null">
+                code,
+            </if>
+            <if test="typeId != null">
+                type_id,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="useTime != null">
+                use_time,
+            </if>
+            <if test="createTime != null">
+                createTime,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="code != null">
+                #{code,jdbcType=VARCHAR},
+            </if>
+            <if test="typeId != null">
+                #{typeId,jdbcType=INTEGER},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=INTEGER},
+            </if>
+            <if test="useTime != null">
+                #{useTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <update id="update" parameterType="com.ht.lottery.entity.Ticket">
+        update ticket
+        <set>
+            <if test="code != null">
+                code = #{code,jdbcType=VARCHAR},
+            </if>
+            <if test="typeId != null">
+                type_id = #{typeId,jdbcType=INTEGER},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=INTEGER},
+            </if>
+            <if test="useTime != null">
+                use_time = #{useTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <sql id="Base_Column_List_Blog">
+    t.id, t.code, t.type_id typeId, t.status, t.create_time createTime, t.use_time useTime,
+    tt.use_start_time useStartTime, tt.use_end_time useEndTime, tt.name
+  </sql>
+
+    <select id="listTicketVO" parameterType="string" resultType="com.ht.lottery.entity.vo.TicketVO">
+        select
+        <include refid="Base_Column_List_Blog"/>
+        from ticket t
+        left join ticket_type tt on t.type_id = tt.id
+        where t.code in (select ticket_code from raffle where usercode = #{usercode})
+        <if test="status != null">
+            AND t.status = #{status}
+        </if>
+    </select>
+
+    <select id="selectByCode" parameterType="string" resultType="com.ht.lottery.entity.vo.TicketVO">
+        select
+        <include refid="Base_Column_List_Blog"/>
+        from ticket t
+        left join ticket_type tt on t.type_id = tt.id
+        where t.code = #{ticketCode}
+    </select>
+
+    <sql id="Query_Column_List">
+        <if test="typeId != null">
+            AND type_id = #{typeId}
+        </if>
+        <if test="status != null">
+            AND status = #{status}
+        </if>
+    </sql>
+    <select id="listTicket" parameterType="com.ht.lottery.entity.Ticket" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from ticket
+        where 1 = 1
+        <include refid="Query_Column_List"/>
+        order by id
+    </select>
+
+    <select id="selectOne" parameterType="com.ht.lottery.entity.Ticket" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from ticket
+        where 1 = 1
+        <include refid="Query_Column_List"/>
+        order by id
+        limit 1
+    </select>
+
+    <sql id="Base_Column_List_Blog2">
+    r.create_time createTime,u.mobile,u.name userName,tt.name TicketTypeName,tt.remark TicketTypeRemark
+  </sql>
+    <select id="listRaffleUser" resultType="com.ht.lottery.entity.vo.RaffleUserVO">
+        select <include refid="Base_Column_List_Blog2"/>
+        from raffle r
+        left join ticket t on r.ticket_code = t.code
+        left join ticket_type tt on t.type_id = tt.id
+        left join ht_user u on r.usercode = u.usercode
+        order by r.id desc
+    </select>
+
+    <select id="listTicketDTO" resultType="com.ht.lottery.entity.vo.TicketDTO">
+        SELECT	tt.id typeId,t.STATUS,	tt.NAME typeName,count(*) num
+        FROM ticket t LEFT JOIN ticket_type tt ON t.type_id = tt.id
+        GROUP BY tt.id,	tt.NAME,t.STATUS
+        ORDER BY t.status,tt.id
+    </select>
+</mapper>

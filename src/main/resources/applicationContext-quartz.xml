@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!--JobDetail-定时任务1:用户抽奖次数统一加1 -->
+    <bean id="jobDetail_time_1"
+          class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="quartzDeal"/>
+        <property name="targetMethod" value="addUserNum"/>
+    </bean>
+    <!--JobDetail-定时任务2:初始化每日奖品数量 -->
+    <bean id="jobDetail_time_2"
+          class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="quartzDeal"/>
+        <property name="targetMethod" value="initTicketTypeDailyNum"/>
+    </bean>
+    <!--JobDetail-定时任务3:修改奖品为可使用状态 -->
+    <bean id="jobDetail_time_3"
+          class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="quartzDeal"/>
+        <property name="targetMethod" value="updateTicketTypeStatusWhoIsZero"/>
+    </bean>
+    <bean id="trigger_time_1" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail" ref="jobDetail_time_1"/>
+        <property name="cronExpression" value="${quartz_time_1}"/>
+    </bean>
+    <bean id="trigger_time_2" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail" ref="jobDetail_time_2"/>
+        <property name="cronExpression" value="${quartz_time_1}"/>
+    </bean>
+
+    <bean id="trigger_time_3" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail" ref="jobDetail_time_3"/>
+        <property name="cronExpression" value="${quartz_time_3}"/>
+    </bean>
+
+    <!-- 定时器列表-->
+    <bean id="schedulerFactoryBean" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="triggers">
+            <list>
+                <ref bean="trigger_time_1"/>
+                <ref bean="trigger_time_2"/>
+                <ref bean="trigger_time_3"/>
+            </list>
+        </property>
+    </bean>
+</beans>
