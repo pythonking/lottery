@@ -34,12 +34,4 @@ public class QuartzDeal {
         Integer count = ticketTypeService.initTicketTypeDailyNum();
         LOGGER.info("初始化每天奖品数量: " + count);
     }
-
-    /**
-     * 修改奖品为可使用状态
-     */
-    public void updateTicketTypeStatusWhoIsZero() {
-        Integer count = ticketTypeService.updateTicketTypeStatusWhoIsZero();
-        LOGGER.info("修改奖品为可使用状态数量: " + count);
-    }
 }

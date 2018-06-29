@@ -15,12 +15,7 @@
         <property name="targetObject" ref="quartzDeal"/>
         <property name="targetMethod" value="initTicketTypeDailyNum"/>
     </bean>
-    <!--JobDetail-定时任务3:修改奖品为可使用状态 -->
-    <bean id="jobDetail_time_3"
-          class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
-        <property name="targetObject" ref="quartzDeal"/>
-        <property name="targetMethod" value="updateTicketTypeStatusWhoIsZero"/>
-    </bean>
+
     <bean id="trigger_time_1" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
         <property name="jobDetail" ref="jobDetail_time_1"/>
         <property name="cronExpression" value="${quartz_time_1}"/>
@@ -30,10 +25,6 @@
         <property name="cronExpression" value="${quartz_time_1}"/>
     </bean>
 
-    <bean id="trigger_time_3" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
-        <property name="jobDetail" ref="jobDetail_time_3"/>
-        <property name="cronExpression" value="${quartz_time_3}"/>
-    </bean>
 
     <!-- 定时器列表-->
     <bean id="schedulerFactoryBean" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
@@ -41,7 +32,6 @@
             <list>
                 <ref bean="trigger_time_1"/>
                 <ref bean="trigger_time_2"/>
-                <ref bean="trigger_time_3"/>
             </list>
         </property>
     </bean>
